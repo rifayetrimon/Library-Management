@@ -1,0 +1,72 @@
+{% extends "common/base.html" %}
+
+{% block content %}
+
+
+<div class="container mx-auto px-4 py-8">
+
+    <!-- Title -->
+    <h1 class="text-3xl font-bold text-center mb-8">All Books</h1>
+
+    <!-- Table -->
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <table class="min-w-full leading-normal">
+            <thead>
+                <tr>
+                    <th class="px-5 py-3 bg-gray-800 text-left text-xs font-semibold text-white uppercase tracking-wider">Title</th>
+                    <th class="px-5 py-3 bg-gray-800 text-left text-xs font-semibold text-white uppercase tracking-wider">Author</th>
+                    <th class="px-5 py-3 bg-gray-800 text-left text-xs font-semibold text-white uppercase tracking-wider">ISBN</th>
+                    <th class="px-5 py-3 bg-gray-800 text-left text-xs font-semibold text-white uppercase tracking-wider">Year</th>
+                    <th class="px-5 py-3 bg-gray-800 text-left text-xs font-semibold text-white uppercase tracking-wider">Price</th>
+                    <th class="px-5 py-3 bg-gray-800 text-left text-xs font-semibold text-white uppercase tracking-wider">Quantity</th>
+                    <th class="px-5 py-3 bg-gray-800 text-left text-xs font-semibold text-white uppercase tracking-wider">Lent</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loop through books -->
+                {% for book in books %}
+                <tr class="border-b border-gray-200 hover:bg-gray-50">
+                    <td class="px-5 py-5 text-sm"><a href="{% url 'singel' id=book.id %}">{{ book.title }}</a></td>
+                    <td class="px-5 py-5 text-sm"> 
+                    {% if book.author %}
+                        {% for author in book.author %}
+                            {{ author }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        No authors listed
+                    {% endif %}</td>
+                    <td class="px-5 py-5 text-sm">{{ book.isbn }}</td>
+                    <td class="px-5 py-5 text-sm">{{ book.year }}</td>
+                    <td class="px-5 py-5 text-sm">{{ book.price }} $</td>
+                    <td class="px-5 py-5 text-sm">{{ book.quantity }}</td>
+                    <td><a href="{% url 'lent' book.id %}" class="ml-2 bg-green-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded">
+                        Lent
+                    </a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-5 py-5 text-center text-sm">No books available</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock content %}
+

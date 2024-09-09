@@ -1,0 +1,55 @@
+{% extends "common/base.html" %}
+
+{% block content %}
+
+<div class="container mx-auto px-4 py-8">
+
+    <!-- Book Details Card -->
+    <div class="max-w-2xl mx-auto bg-white shadow-md rounded-lg overflow-hidden">
+        <div class="px-6 py-4">
+            <!-- Title -->
+            <h1 class="text-3xl font-bold mb-4">{{ book_details.title }}</h1>
+            
+            <!-- Author -->
+            <p class="text-gray-700 text-lg mb-2"><strong>Author:</strong> 
+            {% if book_details.author %}
+                {% for author in book_details.author %}
+                    {{ author }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            {% else %}
+                No authors listed
+            {% endif %}</p>
+
+            <!-- ISBN -->
+            <p class="text-gray-700 text-lg mb-2"><strong>ISBN:</strong> {{ book_details.isbn }}</p>
+
+            <!-- Year -->
+            <p class="text-gray-700 text-lg mb-2"><strong>Published Year:</strong> {{ book_details.year }}</p>
+
+            <!-- Price -->
+            <p class="text-gray-700 text-lg mb-2"><strong>Price:</strong> ${{ book_details.price }}</p>
+
+            <!-- Quantity -->
+            <p class="text-gray-700 text-lg mb-2"><strong>Quantity Available:</strong> {{ book_details.quantity }}</p>
+
+            <!-- Buttons -->
+            <div class="mt-6">
+                <a href="{% url 'home' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Book List
+                </a>
+                <a href="{% url 'update' book_details.id %}" class="ml-2 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded">
+                    Edit Book
+                </a>
+                <a href="{% url 'delete' book_details.id %}" class="ml-2 bg-red-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded">
+                    Delete
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+{% endblock content %}

@@ -1,0 +1,27 @@
+{% extends "common/base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-center mb-8">Lent Book List</h1>
+    <table class="table-auto w-full">
+        <thead>
+            <tr>
+                <th class="px-4 py-2">Borrower Name</th>
+                <th class="px-4 py-2">Book Title</th>
+                <th class="px-4 py-2">Quantity</th>
+                <th class="px-4 py-2">Borrow Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lent_book in lent_books %}
+            <tr>
+                <td class="border px-4 py-2">{{ lent_book.borrower_name }}</td>
+                <td class="border px-4 py-2">{{ lent_book.book.title }}</td>
+                <td class="border px-4 py-2">{{ lent_book.quantity }}</td>
+                <td class="border px-4 py-2">{{ lent_book.borrow_date }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

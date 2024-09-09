@@ -1,0 +1,43 @@
+{% extends "common/base.html" %}
+
+{% block content %}
+
+<form method="POST" class="w-full max-w-lg mx-auto">
+    {% csrf_token %}
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="title">Title</label>
+        {{ form.title }}
+    </div>
+    
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="author">Author</label>
+        {{ form.authors_input }}
+    </div>
+
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="isbn">ISBN</label>
+        {{ form.isbn }}
+    </div>
+
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="year">Year</label>
+        {{ form.year }}
+    </div>
+
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="price">Price</label>
+        {{ form.price }}
+    </div>
+
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="quantity">Quantity</label>
+        {{ form.quantity }}
+    </div>
+
+    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Update 
+    </button>
+</form>
+
+
+{% endblock content %}
