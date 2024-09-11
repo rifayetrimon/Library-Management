@@ -181,11 +181,11 @@ def login_view(request):
     if request.method == 'POST':
         form = CustomAuthenticationForm(request, request.POST)
         if form.is_valid():
-            username = form.cleaned_data.get('username')
+            user_name = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
 
             # Use Django's authenticate method
-            user = authenticate(request, username=username, password=password)
+            user = authenticate(request, username=user_name, password=password)
             if user is not None:
                 # Login the user
                 login(request, user)
@@ -205,3 +205,6 @@ def logout_view(request):
     return redirect('login')
 
 
+
+def profile(request):
+    return render(request, 'profile.html')
