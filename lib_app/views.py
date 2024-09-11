@@ -1,7 +1,12 @@
+from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import BookForm, LentBookForm, ReturnBookForm
+from .forms import BookForm, LentBookForm, ReturnBookForm, CustomUserCreationForm, CustomAuthenticationForm
 from django.http import HttpResponse
 from .models import Book, LentBook
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+
 
 # Create your views here.
 
@@ -15,12 +20,11 @@ def create(request): #add new book
             return redirect('home')
         else:
             return HttpResponse('Invalid data!')
-
     return render(request, 'create.html', {'form': BookForm()})
 
 
 
-
+@login_required
 def home(request): #show all books
     books = Book.objects.all()
     result = []
@@ -37,20 +41,19 @@ def home(request): #show all books
             'price': book.price,
             'quantity': book.quantity
         })
-
     return render(request, 'home.html', {'books': result })
 
 
-
+@login_required
 def singel(request, id): #show singel books
     book = Book.objects.get(pk=id)
     book_details = {
         'id': book.pk,
         'title': book.title,
-        'author': [
+        'author': {
             f'{author.first_name} {author.last_name}'
             for author in book.authors.all()
-            ],
+        },
         'isbn': book.isbn,
         'year': book.year,
         'price': book.price,
@@ -58,7 +61,7 @@ def singel(request, id): #show singel books
     }
     return render(request, 'singel.html', {'book_details': book_details})
 
-
+@login_required
 def update(request, id):  # Update book (title and optionally authors)
     book = get_object_or_404(Book, id=id)
 
@@ -69,55 +72,24 @@ def update(request, id):  # Update book (title and optionally authors)
             return redirect('home')
         else:
             return HttpResponse('Invalid data!')
-
-    else:  # If GET request
-        # Pre-populate authors with a comma-separated string of current authors
+    else:  # If GET request   # Pre-populate authors with a comma-separated string of current authors
         authors = ', '.join([f"{author.first_name} {author.last_name}" for author in book.authors.all()])
         form = BookForm(instance=book, initial={'authors_input': authors})  # Pre-fill author field
-    
     return render(request, 'update.html', {'form': form})
 
-
-# def update(request, id):  # Update book
-#     book = Book.objects.get(id=id)
-
-#     if request.method == 'POST':
-#         form = BookForm(request.POST, instance=book)
-#         if form.is_valid():
-#             book = form.save(commit=False)
-            
-#             # Get the author input from the form
-#             author_names = form.cleaned_data['authors_input'].split(',')
-#             book.authors.clear()  # Clear existing authors
-            
-#             for name in author_names:
-#                 name = name.strip()
-#                 if name:  # Only if name is not empty
-#                     # Assuming authors' names are provided in "First Last" format
-#                     first_name, last_name = name.split(' ', 1)
-#                     author, created = Author.objects.get_or_create(first_name=first_name, last_name=last_name)
-#                     book.authors.add(author)
-                    
-#             book.save()
-#             return redirect('home')
-#         else:
-#             return HttpResponse('Invalid data!')
-
-#     else:  # If GET request
-#         # Pre-populate the author field with a comma-separated string of authors
-#         authors = ', '.join([f"{author.first_name} {author.last_name}" for author in book.authors.all()])
-#         form = BookForm(instance=book, initial={'authors_input': authors})  # Set initial value for authors
-    
-#     return render(request, 'update.html', {'form': form})
-
-
+@login_required
 def delete(request, id): #delete book
-    book = Book.objects.get(id=id)
+    book = get_object_or_404(Book, id=id)
+    auhtor = list(book.authors.all())
     book.delete()
+    
+    for author in auhtor:
+        if author.books.count() == 0:
+            author.delete()
     return redirect('home')
 
 
-
+@login_required
 def lend_book(request, book_id=None):
     # Pre-populate the form with the selected book
     book = get_object_or_404(Book, id=book_id) if book_id else None
@@ -141,7 +113,7 @@ def lend_book(request, book_id=None):
     return render(request, 'lent.html', {'form': form})
 
 
-
+@login_required
 def lent_book_list(request):
     # Get all lent books
     lent_books = LentBook.objects.all()
@@ -150,7 +122,7 @@ def lent_book_list(request):
 
 
 
-
+@login_required
 def return_book(request):
     if request.method == 'POST':
         form = ReturnBookForm(request.POST)
@@ -183,4 +155,53 @@ def return_book(request):
     else:
         form = ReturnBookForm()  # Render empty form on GET request
         return render(request, 'return_book.html', {'form': form})
+
+
+
+def register(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(data=request.POST)
+        if form.is_valid():
+            user = form.save()
+
+            # Auto login the user after registration
+            login(request, user)
+
+            messages.success(request, 'Registration successful! You are now logged in.')
+            return redirect('home')  # Redirect to 'home' or another page
+        else:
+            messages.error(request, 'Invalid data! Please check the form.')
+    else:
+        form = CustomUserCreationForm()
+
+    return render(request, 'register.html', {'form': form})
+
+
+def login_view(request):
+    if request.method == 'POST':
+        form = CustomAuthenticationForm(request, request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+
+            # Use Django's authenticate method
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                # Login the user
+                login(request, user)
+                return redirect('home')
+            else:
+                # Invalid credentials, show an error message
+                messages.error(request, 'Invalid username or password')
+    else:
+        form = CustomAuthenticationForm()
+
+    return render(request, 'login.html', {'form': form})
+
+
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
 

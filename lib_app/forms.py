@@ -1,5 +1,8 @@
 from django import forms
 from .models import Book, Author, LentBook
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+
 
 class BookForm(forms.ModelForm):
     # Custom author input field (comma-separated)
@@ -104,3 +107,51 @@ class ReturnBookForm(forms.Form):
         }), 
         label="Quantity"
     )
+
+
+
+class CustomUserCreationForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
+
+        widgets = {
+            'username': forms.TextInput(attrs={
+                'class': 'form-input mt-2 block w-full bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-base py-2 px-3',
+                'placeholder': 'Enter your username'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-input mt-2 block w-full bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-base py-2 px-3',
+                'placeholder': 'Enter your email'
+            }),
+            'password1': forms.PasswordInput(attrs={
+                'class': 'form-input mt-2 block w-full bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-base py-2 px-3',
+                'placeholder': 'Enter your password'
+            }),
+            'password2': forms.PasswordInput(attrs={
+                'class': 'form-input mt-2 block w-full bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-base py-2 px-3',
+                'placeholder': 'Confirm your password'
+            }),
+        }
+
+
+class CustomAuthenticationForm(AuthenticationForm):
+    username = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'form-input mt-2 block w-full bg-white border border-gray-300 rounded-lg py-2 px-3',
+        'placeholder': 'Enter your username',
+        'autofocus': True
+    }))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={
+        'class': 'form-input mt-2 block w-full bg-white border border-gray-300 rounded-lg py-2 px-3',
+        'placeholder': 'Enter your password',
+    }))
+
+# class CustomLoginForm(forms.Form):
+#     username = forms.CharField(widget=forms.TextInput(attrs={
+#         'class': 'form-input mt-2 block w-full bg-white border border-gray-300 rounded-lg py-2 px-3',
+#         'placeholder': 'Enter your username'
+#     }))
+#     password = forms.CharField(widget=forms.PasswordInput(attrs={
+#         'class': 'form-input mt-2 block w-full bg-white border border-gray-300 rounded-lg py-2 px-3',
+#         'placeholder': 'Enter your password'
+#     }))

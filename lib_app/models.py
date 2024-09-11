@@ -39,6 +39,6 @@ class LentBook(models.Model):
         # Subtract the lent quantity from the main book quantity
         self.book.quantity -= self.quantity
         self.book.save()
-
+        
         # Save the LentBook record
         self.save()

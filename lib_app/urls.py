@@ -11,4 +11,7 @@ urlpatterns = [
     path('lent/<int:book_id>/', views.lend_book, name='lent'),
     path('lent_book_list/', views.lent_book_list, name='lent_book_list'),
     path('return/', views.return_book, name='return'),
+    path('login/', views.login_view, name='login'),
+    path('register/', views.register, name='register'),
+    path('logout/', views.logout_view, name='logout'),
 ]
